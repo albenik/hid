@@ -180,6 +180,10 @@ func (d *linuxDevice) Close() {
 	d.f.Close()
 }
 
+func (dev *linuxDevice) WriteFeature(data []byte) error {
+	return dev.writeReport(HID_REPORT_TYPE_FEATURE, data)
+}
+
 func (d *linuxDevice) Write(data []byte) error {
 	_, err := d.f.Write(data)
 	return err

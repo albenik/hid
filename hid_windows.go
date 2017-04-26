@@ -52,6 +52,18 @@ func (d *winDevice) Close() {
 	d.handle = syscall.InvalidHandle
 }
 
+func (d *winDevice) WriteFeature(data []byte) error {
+	// ensure the correct amount of data
+	buffer := make([]byte, d.info.FeatureReportLength, d.info.FeatureReportLength)
+	copy(buffer, data)
+
+	if C.HidD_SetFeature(d.h(), unsafe.Pointer(&buffer[0]), C.DWORD(len(buffer))) != 0 {
+		return nil
+	} else {
+		return syscall.GetLastError()
+	}
+}
+
 func (d *winDevice) Write(data []byte) error {
 	// first make sure we send the correct amount of data to the device
 	outSize := int(d.info.OutputReportLength + 1)
@@ -215,6 +227,7 @@ func ByPath(devicePath string) (*DeviceInfo, error) {
 			devInfo.UsagePage = uint16(caps.UsagePage)
 			devInfo.Usage = uint16(caps.Usage)
 			devInfo.InputReportLength = uint16(caps.InputReportByteLength - 1)
+			devInfo.FeatureReportLength = uint16(caps.FeatureReportByteLength)
 			devInfo.OutputReportLength = uint16(caps.OutputReportByteLength - 1)
 		}
 

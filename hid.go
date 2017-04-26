@@ -15,14 +15,19 @@ type DeviceInfo struct {
 	UsagePage uint16
 	Usage     uint16
 
-	InputReportLength  uint16
-	OutputReportLength uint16
+	InputReportLength   uint16
+	OutputReportLength  uint16
+	FeatureReportLength uint16
 }
 
 // A Device provides access to a HID device.
 type Device interface {
 	// Close closes the device and associated resources.
 	Close()
+
+	// Write to the device
+	// (technically a HID report with type 'feature' is send to the device)
+	WriteFeature([]byte) error
 
 	// Write writes an output report to device. The first byte must be the
 	// report number to write, zero if the device does not use numbered reports.

@@ -359,6 +359,10 @@ func (dev *osxDevice) setReport(typ C.IOHIDReportType, data []byte) error {
 	return nil
 }
 
+func (dev *osxDevice) WriteFeature(data []byte) error {
+	return dev.setReport(C.kIOHIDReportTypeFeature, data)
+}
+
 func (dev *osxDevice) Write(data []byte) error {
 	return dev.setReport(C.kIOHIDReportTypeOutput, data)
 }
